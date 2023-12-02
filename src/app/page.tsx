@@ -1,95 +1,94 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { userSchema, mappedPlans } from "@/validations/userSchema";
 
-export default function Home() {
+type Inputs = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  dateOfBirth: string;
+  weight: string;
+  plan: string;
+};
+
+const Home = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>({
+    resolver: zodResolver(userSchema),
+  });
+
+  const opcionesPlanes = Object.entries(mappedPlans).map(([key, value]) => (
+    <option key={key} value={key}>
+      {value}
+    </option>
+  ));
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+  };
+  console.log(errors);
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <label htmlFor="name">Name</label>
+        <input type="text" id="name" {...register("name")} />
+        {errors.name?.message && <p>{errors.name.message}</p>}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+        {/*Email */}
+        <label htmlFor="email">Email</label>
+        <input type="email" id="email" {...register("email")} />
+        {errors.email?.message && <p>{errors.email.message}</p>}
+
+        {/*Password */}
+        <label htmlFor="password">Password</label>
+        <input type="password" id="password" {...register("password")} />
+        {errors.password?.message && <p>{errors.password.message}</p>}
+
+        {/*Confirm Password */}
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          {...register("confirmPassword")}
         />
-      </div>
+        {errors.confirmPassword?.message && (
+          <p>{errors.confirmPassword.message}</p>
+        )}
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+        {/*Fecha de nacimiento */}
+        <label htmlFor="dateOfBirth">Fecha de nacimiento</label>
+        <input type="date" id="birthDate" {...register("dateOfBirth")} />
+        {errors.dateOfBirth?.message && <p>{errors.dateOfBirth.message}</p>}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+        {/*Weight */}
+        <label htmlFor="weight">Weight</label>
+        <input type="number" id="weight" {...register("weight")} />
+        {errors.weight?.message && <p>{errors.weight.message}</p>}
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+        {/*plan */}
+        <label htmlFor="plan">Plan</label>
+        {/* <select id="plan" {...register("plan")}>
+          <option value="free">Free</option>
+          <option value="basic">Basic</option>
+          <option value="medium">Medium</option>
+          <option value="premium">Premium</option>
+        </select> */}
+        <select id="plan" {...register("plan")}>
+          {opcionesPlanes}
+        </select>
+        {errors.plan?.message && <p>{errors.plan.message}</p>}
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+        <button type="submit">Submit</button>
+      </form>
+      <div>{JSON.stringify(watch(), null, 2)}</div>
+    </div>
+  );
+};
+
+export default Home;
